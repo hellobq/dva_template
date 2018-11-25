@@ -3,10 +3,11 @@
   "scripts": {
     "start": "roadhog server",
     "build": "roadhog build",
-    "lint": "eslint --ext .js src test"
+    "lint": "eslint --ext .js src"
   },
   "dependencies": {
     "antd": "^3.10.7",
+    "axios": "^0.18.0",
     "babel-plugin-import": "^1.11.0",
     "dva": "^2.1.0",
     "history": "^4.7.2",

@@ -6,7 +6,7 @@ const routes = [{
   path: '/',
   exact: true,
   models: () => [
-    import('./models/Home')
+    import('./pages/Home/model')
   ],
   component: () => import('./pages/Home')
 }]

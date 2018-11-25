@@ -1,15 +1,19 @@
-import fetch from 'dva/fetch'
+// 也可以使用其他请求库
 
-const parseJSON = response => response.json()
+import fetch from 'dva/fetch';
 
-const checkStatus = response => {
+function parseJSON(response) {
+  return response.json();
+}
+
+function checkStatus(response) {
   if (response.status >= 200 && response.status < 300) {
-    return response
+    return response;
   }
 
-  const error = new Error(response.statusText)
-  error.response = response
-  throw error
+  const error = new Error(response.statusText);
+  error.response = response;
+  throw error;
 }
 
 /**
@@ -19,8 +23,8 @@ const checkStatus = response => {
  * @param  {object} [options] The options we want to pass to "fetch"
  * @return {object}           An object containing either "data" or "err"
  */
-export default (url, opts) => {
-  return fetch(url, opts)
+export default function request(url, options) {
+  return fetch(url, options) 
     .then(checkStatus)
     .then(parseJSON)
     .then(data => ({ data }))
