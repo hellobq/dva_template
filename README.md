@@ -1,1 +1,1 @@
-dva-template init!
+dva template
