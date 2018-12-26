@@ -10,6 +10,6 @@ module.exports = {
     }
   },
   "rules": {
-    "quotes": ["error", "single"]
+    "quotes": [2, "single"]
   }
 }

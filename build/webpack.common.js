@@ -1,43 +1,75 @@
 const { resolve } = require('path')
-const { DefinePlugin } = require('webpack')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const CleanWebpackPlugin = require('clean-webpack-plugin')
 const AsyncChunkNames = require('webpack-async-chunk-names-plugin')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const autoprefixer = require('autoprefixer')
+const { DefinePlugin } = require('webpack')
+// const { DefinePlugin } = require('webpack')
 const devMode = process.env.NODE_ENV !== 'production'
 
+const getPath = dir => resolve(__dirname, '..', dir)
+const isUseEslint = true
+const createEslintRule = () => ({
+  test: /\.js$/,
+  enforce: 'pre',
+  use: {
+    loader: 'eslint-loader',
+    options: {
+      formatter: require('eslint-friendly-formatter'),
+      cache: true,
+      emitWarning: false
+    }
+  },
+  include: getPath('src')
+})
+
 module.exports = {
+  context: getPath('./'),
   entry: './src/index.js',
   output: {
     filename: devMode ? '[name].js' : 'js/[name].[chunkhash:8].js',
     chunkFilename: devMode ? '[name].chunk.js' : 'js/[name].[chunkhash:8].chunk.js',
-    path: resolve(__dirname, './dist'),
+    path: getPath('dist'),
     publicPath: '/'
   },
   module: {
-    rules: [{
-      test: /\.js$/,
-      enforce: 'pre',
-      use: {
-        loader: 'eslint-loader',
-        options: {
-          cache: true,
-          failOnWarning: true,
-          failOnError: true
-        }
-      },
-      exclude: /node_modules/
-    }, {
+    rules: [
+      ...(isUseEslint ? [createEslintRule()] : []),
+    {
       test: /\.js$/,
       use: {
         loader: 'babel-loader'
       },
-      exclude: /node_modules/
+      include: getPath('src')
     }, {
-      test: /\.(jpg|png|gif|jpeg|svg|)$/,
+      test: /\.(jpe?g|png|gif|svg|)(\?.*)?$/,
       loader: 'url-loader', options: {
         name: devMode ? 'images/[name].[ext]' : 'images/[name].[hash:8].[ext]',
-        limit: 100
+        limit: 10000
       }
+    }, {
+      // if use scss
+      test: /\.scss$/,
+      use: [{
+        loader: devMode ? 'style-loader' : MiniCssExtractPlugin.loader
+      }, {
+        loader: 'css-loader', options: {
+          sourceMap: devMode
+        }
+      }, {
+        loader: 'postcss-loader', options: {
+          plugins: [
+            autoprefixer()
+          ],
+          sourceMap: devMode
+        }
+      },{
+        loader: 'sass-loader', options: {
+          sourceMap: devMode
+        }
+      }],
+      exclude: /node_modules/
     }, {
       test: /\.(mp3|mp4|webm|ogg|wav|flac|acc)(\??.*)$/,
       loader: 'url-loader', options: {
@@ -93,18 +125,36 @@ module.exports = {
   },
   resolve: {
     alias: {
-      '@': resolve(__dirname, './src')
+      '@': getPath('src')
     },
-    extensions: ['.js', '.scss']
+    extensions: ['.js', '.scss', '.json']
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: './src/index.html'
+      template: getPath('src/index.html'),
+      inject: true,
+      // minify: {
+      //   removeComments: true,
+      //   removeAttributeQuotes: true,
+      //   collapseWhitespace: true
+      // }
     }),
-    new CleanWebpackPlugin(['dist']),
     new DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV)
     }),
+    // if you want to use scss/less/stylus
+    new MiniCssExtractPlugin({
+      filename: 'style/[name].[contenthash:8].css'
+    }),
+    new CleanWebpackPlugin(['dist'], {
+        root: getPath('./'),
+        verbose: true
+      }
+    ),
+    // If you want to define global variables
+    // new DefinePlugin({
+    //   'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV)
+    // }),
     new AsyncChunkNames()
   ]
 }

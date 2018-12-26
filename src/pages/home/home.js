@@ -16,7 +16,6 @@ const mapDispatch = (dispatch) => ({
 @connect(mapState, mapDispatch)
 class Home extends Component {
   render () {
-    console.log(this.props)
     return (
       <Wrapper className='home'>
         hahjs
