@@ -5,11 +5,8 @@ module.exports = {
       "@babel/preset-env",
       {
         "targets": {
-          "browsers": [
-            "> 1%",
-            "last 2 versions",
-            "not ie < 9"
-          ]
+          // 开启esmodules，将忽略对浏览器的兼容设置targets.browsers或者.browserslistrc
+          "esmodules": false
         }
       }
     ]
