@@ -1,4 +1,5 @@
 const { resolve } = require('path')
+const StylelintWebpackPlugin = require('stylelint-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const CleanWebpackPlugin = require('clean-webpack-plugin')
 const AsyncChunkNames = require('webpack-async-chunk-names-plugin')
@@ -89,29 +90,35 @@ module.exports = {
       minSize: 0,
       minChunks: 1,
       maxAsyncRequests: 5,
-      maxInitialRequests: 3,
+      maxInitialRequests: 10,
       automaticNameDelimiter: '~',
       name: true,
       cacheGroups: {
         default: false,
         verdors: false,
-        
+
         style: {
-          priority: 10,
+          priority: 20,
           test: /styled-components/,
-          name: 'verdor~styled-components'
+          name: 'verdor~styled-components',
+          reuseExistingChunk: true
         },
         'react-dom': {
           chunks: 'initial',
-          priority: 1,
+          priority: 10,
           test: /react-dom/,
           name: 'verdor~react-dom'
         },
-        verdor: {
-          chunks: 'async',
-          priority: -10,
+        'react-all': {
+          priority: 9,
+          test: /react.*/,
+          name: 'verdor~react-all'
+        },
+        verdors: {
+          chunks: 'all',
+          priority: 0,
           test: /node_modules/,
-          name: 'verdor~all'
+          name: 'verdors~all'
         }
       }
     },
@@ -132,11 +139,11 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: getPath('src/index.html'),
       inject: true,
-      // minify: {
-      //   removeComments: true,
-      //   removeAttributeQuotes: true,
-      //   collapseWhitespace: true
-      // }
+      minify: {
+        removeComments: true,
+        removeAttributeQuotes: true,
+        collapseWhitespace: true
+      }
     }),
     new DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV)
@@ -144,6 +151,10 @@ module.exports = {
     // if you want to use scss/less/stylus
     new MiniCssExtractPlugin({
       filename: 'style/[name].[contenthash:8].css'
+    }),
+    new StylelintWebpackPlugin({
+      configFile: getPath('./.stylelintrc.js'),
+      files: ['src/**/style.js']   // if use scss, *.{s,}css
     }),
     new CleanWebpackPlugin(['dist'], {
         root: getPath('./'),
