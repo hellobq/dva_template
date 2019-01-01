@@ -1,12 +1,12 @@
 // https://stylelint.io/user-guide/configuration/
 
 module.exports = {
+  "processors": [
+    "stylelint-processor-styled-components"
+  ],
   "extends": [
     "stylelint-config-recommended",
     "stylelint-config-styled-components"
-  ],
-  "processors": [
-    "stylelint-processor-styled-components"
   ],
 
   // https://stylelint.io/user-guide/rules/
