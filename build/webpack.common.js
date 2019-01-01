@@ -3,9 +3,8 @@ const StylelintWebpackPlugin = require('stylelint-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const CleanWebpackPlugin = require('clean-webpack-plugin')
 const AsyncChunkNames = require('webpack-async-chunk-names-plugin')
-const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+// const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const { DefinePlugin } = require('webpack')
-// const { DefinePlugin } = require('webpack')
 const devMode = process.env.NODE_ENV !== 'production'
 
 const getPath = dir => resolve(__dirname, '..', dir)
@@ -48,29 +47,31 @@ module.exports = {
         name: devMode ? 'images/[name].[ext]' : 'images/[name].[hash:8].[ext]',
         limit: 10000
       }
-    }, {
-      // if use scss
-      test: /\.scss$/,
-      use: [{
-        loader: devMode ? 'style-loader' : MiniCssExtractPlugin.loader
-      }, {
-        loader: 'css-loader', options: {
-          sourceMap: devMode
-        }
-      }, {
-        loader: 'postcss-loader', options: {
-          plugins: [
-            require('autoprefixer')()
-          ],
-          sourceMap: devMode
-        }
-      },{
-        loader: 'sass-loader', options: {
-          sourceMap: devMode
-        }
-      }],
-      exclude: /node_modules/
-    }, {
+    }, 
+    // if use scss
+    // {
+    //   test: /\.scss$/,
+    //   use: [{
+    //     loader: devMode ? 'style-loader' : MiniCssExtractPlugin.loader
+    //   }, {
+    //     loader: 'css-loader', options: {
+    //       sourceMap: devMode
+    //     }
+    //   }, {
+    //     loader: 'postcss-loader', options: {
+    //       plugins: [
+    //         require('autoprefixer')()
+    //       ],
+    //       sourceMap: devMode
+    //     }
+    //   },{
+    //     loader: 'sass-loader', options: {
+    //       sourceMap: devMode
+    //     }
+    //   }],
+    //   exclude: /node_modules/
+    // }, 
+    {
       test: /\.(mp3|mp4|webm|ogg|wav|flac|acc)(\??.*)$/,
       loader: 'url-loader', options: {
         name: devMode ? 'media/[name].[ext]' : 'media/[name].[hash:8].[ext]',
@@ -148,23 +149,23 @@ module.exports = {
     new DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV)
     }),
-    // if you want to use scss/less/stylus
-    new MiniCssExtractPlugin({
-      filename: 'style/[name].[contenthash:8].css'
-    }),
+    // If you want to define global variables
+    // new DefinePlugin({
+    //   'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV)
+    // }),
+    // if use scss
+    // new MiniCssExtractPlugin({
+    //   filename: 'style/[name].[contenthash:8].css'
+    // }),
     new StylelintWebpackPlugin({
       configFile: getPath('./.stylelintrc.js'),
-      files: ['src/**/style.js']   // if use scss, *.{s,}css
+      files: ['src/**/style.js']   // if use scss, src/**/*.{s,}css
     }),
     new CleanWebpackPlugin(['dist'], {
         root: getPath('./'),
         verbose: true
       }
     ),
-    // If you want to define global variables
-    // new DefinePlugin({
-    //   'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV)
-    // }),
     new AsyncChunkNames()
   ]
 }
