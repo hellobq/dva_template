@@ -3,7 +3,6 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 const CleanWebpackPlugin = require('clean-webpack-plugin')
 const AsyncChunkNames = require('webpack-async-chunk-names-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
-const autoprefixer = require('autoprefixer')
 const { DefinePlugin } = require('webpack')
 // const { DefinePlugin } = require('webpack')
 const devMode = process.env.NODE_ENV !== 'production'
@@ -60,7 +59,13 @@ module.exports = {
       }, {
         loader: 'postcss-loader', options: {
           plugins: [
-            autoprefixer()
+            require('autoprefixer')({
+              browsers: [
+                "> 1%",
+                "last 2 versions",
+                "not ie < 9"
+              ]
+            })
           ],
           sourceMap: devMode
         }

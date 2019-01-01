@@ -4,7 +4,13 @@ module.exports = {
     [
       "@babel/preset-env",
       {
-        "targets": "> 0.25%, not dead"
+        "targets": {
+          "browsers": [
+            "> 1%",
+            "last 2 versions",
+            "not ie < 9"
+          ]
+        }
       }
     ]
   ],
