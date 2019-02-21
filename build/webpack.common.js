@@ -3,7 +3,6 @@ const StylelintWebpackPlugin = require('stylelint-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const CleanWebpackPlugin = require('clean-webpack-plugin')
 const AsyncChunkNames = require('webpack-async-chunk-names-plugin')
-// const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const { DefinePlugin } = require('webpack')
 const devMode = process.env.NODE_ENV !== 'production'
 
@@ -152,10 +151,6 @@ module.exports = {
     // If you want to define global variables
     // new DefinePlugin({
     //   'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV)
-    // }),
-    // if use scss
-    // new MiniCssExtractPlugin({
-    //   filename: 'style/[name].[contenthash:8].css'
     // }),
     new StylelintWebpackPlugin({
       configFile: getPath('./.stylelintrc.js'),
