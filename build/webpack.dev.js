@@ -14,6 +14,7 @@ module.exports = merge(common, {
     clientLogLevel: 'none',
     compress: true,
     historyApiFallback: true,
+    quiet: true,
     hot: true,
     overlay: {
       warnings: false,

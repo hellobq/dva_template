@@ -3,6 +3,7 @@ const StylelintWebpackPlugin = require('stylelint-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const CleanWebpackPlugin = require('clean-webpack-plugin')
 const AsyncChunkNames = require('webpack-async-chunk-names-plugin')
+const FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin')
 const { DefinePlugin } = require('webpack')
 const devMode = process.env.NODE_ENV !== 'production'
 
@@ -44,7 +45,7 @@ module.exports = {
       test: /\.(jpe?g|png|gif|svg|)(\?.*)?$/,
       loader: 'url-loader', options: {
         name: devMode ? 'images/[name].[ext]' : 'images/[name].[hash:8].[ext]',
-        limit: 10000
+        limit: 2048
       }
     }, 
     // if use scss
@@ -72,13 +73,13 @@ module.exports = {
     // }, 
     {
       test: /\.(mp3|mp4|webm|ogg|wav|flac|acc)(\??.*)$/,
-      loader: 'url-loader', options: {
+      loader: 'file-loader', options: {
         name: devMode ? 'media/[name].[ext]' : 'media/[name].[hash:8].[ext]',
         limit: 10000
       }
     }, {
       test: /\.(woff2?|eot|ttf|otf)(\??.*)/,
-      loader: 'url-loader', options: {
+      loader: 'file-loader', options: {
         name: devMode ? 'fonts/[name].[ext]' : 'fonts/[name].[hash:8].[ext]',
         limit: 10000
       }
@@ -161,6 +162,11 @@ module.exports = {
         verbose: true
       }
     ),
-    new AsyncChunkNames()
+    new AsyncChunkNames(),
+    new FriendlyErrorsPlugin({
+      compilationSuccessInfo: {
+        messages: ['You application is running here http://localhost:8080']
+      }
+    })
   ]
 }
