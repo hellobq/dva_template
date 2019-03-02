@@ -44,9 +44,9 @@ const commonConfig = {
       include: getPath('src')
     }, {
       test: /\.scss$/,
-      use: [{
-        loader: isDev ? 'style-loader' : MiniCssExtractPlugin.loader
-      }, {
+      use: [
+        isDev ? 'vue-style-loader' : MiniCssExtractPlugin.loader,
+      {
         loader: 'css-loader', options: {
           sourceMap: true
         }

@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <!-- <home-header /> -->
+    <home-header />
     {{ msg }}
   </div>
 </template>
@@ -8,7 +8,7 @@
 <script>
 export default {
   components: {
-    // HomeHeader: () => import(/* webpackChunkName: "HomeHeader" */ './components/Header')
+    HomeHeader: () => import(/* webpackChunkName: "HomeHeader" */ './components/Header')
   },
   data () {
     return {
