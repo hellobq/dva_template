@@ -1,14 +1,13 @@
-const { resolve } = require('path')
-const StylelintWebpackPlugin = require('stylelint-webpack-plugin')
-const HtmlWebpackPlugin = require('html-webpack-plugin')
-const CleanWebpackPlugin = require('clean-webpack-plugin')
-const AsyncChunkNames = require('webpack-async-chunk-names-plugin')
-const FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin')
-const { DefinePlugin } = require('webpack')
-const devMode = process.env.NODE_ENV !== 'production'
+const StylelintWebpackPlugin = require('stylelint-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CleanWebpackPlugin = require('clean-webpack-plugin');
+const FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin');
+const { DefinePlugin } = require('webpack');
+const { resolve } = require('path');
+const IS_DEV = process.env.NODE_ENV !== 'production';
 
-const getPath = dir => resolve(__dirname, '..', dir)
-const isUseEslint = true
+const getPath = dir => resolve(__dirname, '..', dir);
+const isUseEslint = true;
 const createEslintRule = () => ({
   test: /\.js$/,
   enforce: 'pre',
@@ -21,14 +20,13 @@ const createEslintRule = () => ({
     }
   },
   include: getPath('src')
-})
+});
 
 module.exports = {
-  context: getPath('./'),
-  entry: './src/index.js',
+  entry: './src/main.js',
   output: {
-    filename: devMode ? '[name].js' : 'js/[name].[chunkhash:8].js',
-    chunkFilename: devMode ? '[name].chunk.js' : 'js/[name].[chunkhash:8].chunk.js',
+    filename: IS_DEV ? '[name].js' : 'js/[name].[chunkhash:8].js',
+    chunkFilename: IS_DEV ? '[name].chunk.js' : 'js/[name].[chunkhash:8].chunk.js',
     path: getPath('dist'),
     publicPath: '/'
   },
@@ -36,96 +34,50 @@ module.exports = {
     rules: [
       ...(isUseEslint ? [createEslintRule()] : []),
     {
-      test: /\.js$/,
+      test: /\.jsx?$/,
       use: {
         loader: 'babel-loader'
       },
-      include: getPath('src')
+      exclude: /node_modules/
     }, {
       test: /\.(jpe?g|png|gif|svg|)(\?.*)?$/,
       loader: 'url-loader', options: {
-        name: devMode ? 'images/[name].[ext]' : 'images/[name].[hash:8].[ext]',
+        name: IS_DEV ? 'images/[name].[ext]' : 'images/[name].[hash:8].[ext]',
         limit: 2048
       }
-    }, 
-    // if use scss
-    // {
-    //   test: /\.scss$/,
-    //   use: [{
-    //     loader: devMode ? 'style-loader' : MiniCssExtractPlugin.loader
-    //   }, {
-    //     loader: 'css-loader', options: {
-    //       sourceMap: devMode
-    //     }
-    //   }, {
-    //     loader: 'postcss-loader', options: {
-    //       plugins: [
-    //         require('autoprefixer')()
-    //       ],
-    //       sourceMap: devMode
-    //     }
-    //   },{
-    //     loader: 'sass-loader', options: {
-    //       sourceMap: devMode
-    //     }
-    //   }],
-    //   exclude: /node_modules/
-    // }, 
-    {
+    }, {
+      test: /\.scss$/,
+      use: [{
+        loader: IS_DEV ? 'style-loader' : MiniCssExtractPlugin.loader
+      }, {
+        loader: 'css-loader', options: {
+          sourceMap: IS_DEV,
+          modules: true
+        }
+      }, {
+        loader: 'postcss-loader', options: {
+          plugins: [
+            require('autoprefixer')()
+          ],
+          sourceMap: IS_DEV
+        }
+      },{
+        loader: 'sass-loader', options: {
+          sourceMap: IS_DEV
+        }
+      }],
+      exclude: /node_modules/
+    }, {
       test: /\.(mp3|mp4|webm|ogg|wav|flac|acc)(\??.*)$/,
       loader: 'file-loader', options: {
-        name: devMode ? 'media/[name].[ext]' : 'media/[name].[hash:8].[ext]',
-        limit: 10000
+        name: IS_DEV ? 'media/[name].[ext]' : 'media/[name].[hash:8].[ext]'
       }
     }, {
       test: /\.(woff2?|eot|ttf|otf)(\??.*)/,
       loader: 'file-loader', options: {
-        name: devMode ? 'fonts/[name].[ext]' : 'fonts/[name].[hash:8].[ext]',
-        limit: 10000
+        name: IS_DEV ? 'fonts/[name].[ext]' : 'fonts/[name].[hash:8].[ext]'
       }
     }]
-  },
-  optimization: {
-    splitChunks: {
-      chunks: 'all',
-      minSize: 0,
-      minChunks: 1,
-      maxAsyncRequests: 5,
-      maxInitialRequests: 10,
-      automaticNameDelimiter: '~',
-      name: true,
-      cacheGroups: {
-        default: false,
-        verdors: false,
-
-        style: {
-          priority: 20,
-          test: /styled-components/,
-          name: 'verdor~styled-components',
-          reuseExistingChunk: true
-        },
-        'react-dom': {
-          chunks: 'initial',
-          priority: 10,
-          test: /react-dom/,
-          name: 'verdor~react-dom'
-        },
-        'react-all': {
-          priority: 9,
-          test: /react.*/,
-          name: 'verdor~react-all'
-        },
-        verdors: {
-          chunks: 'all',
-          priority: 0,
-          test: /node_modules/,
-          name: 'verdors~all'
-        }
-      }
-    },
-    runtimeChunk: {
-      name: 'runtime'
-    }
   },
   performance: {
     hints: false
@@ -149,24 +101,22 @@ module.exports = {
     new DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV)
     }),
-    // If you want to define global variables
-    // new DefinePlugin({
-    //   'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV)
-    // }),
+    new DefinePlugin({
+      'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV)
+    }),
     new StylelintWebpackPlugin({
       configFile: getPath('./.stylelintrc.js'),
-      files: ['src/**/style.js']   // if use scss, src/**/*.{s,}css
+      files: ['src/**/*.{s,}css']   // if use styled-components, src/**/style.js
     }),
     new CleanWebpackPlugin(['dist'], {
         root: getPath('./'),
         verbose: true
       }
     ),
-    new AsyncChunkNames(),
     new FriendlyErrorsPlugin({
       compilationSuccessInfo: {
         messages: ['You application is running here http://localhost:8080']
       }
     })
   ]
-}
+};

@@ -10,6 +10,8 @@ module.exports = merge(common, {
     new HotModuleReplacementPlugin()
   ],
   devServer: {
+    port: process.env.PORT || 8080,
+    host: 'localhost',
     contentBase: join(__dirname, '../dist'),
     clientLogLevel: 'none',
     compress: true,
