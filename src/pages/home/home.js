@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
+import Test from './components/Test'
 import styles from './style'
 
 const mapState = (state) => ({
@@ -16,6 +17,7 @@ class Home extends Component {
     return (
       <div className={styles.wrapper}>
         hello world
+        <Test />
       </div>
     )
   }

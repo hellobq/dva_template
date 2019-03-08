@@ -51,6 +51,7 @@ module.exports = {
         loader: IS_DEV ? 'style-loader' : MiniCssExtractPlugin.loader
       }, {
         loader: 'css-loader', options: {
+          importLoaders: 2,
           sourceMap: IS_DEV,
           modules: true
         }
@@ -86,7 +87,7 @@ module.exports = {
     alias: {
       '@': getPath('src')
     },
-    extensions: ['.js', '.scss', '.json']
+    extensions: ['.js', '.jsx', '.scss', '.json']
   },
   plugins: [
     new HtmlWebpackPlugin({
